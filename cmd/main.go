@@ -12,9 +12,10 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	defer g.Close()
 
+	defer g.Close()
 	g.SetManagerFunc(layout)
+	g.Cursor = true
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
@@ -27,18 +28,18 @@ func main() {
 
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
-	//g.Mouse = true
 	if v, err := g.SetView("todo", maxX/2, 0, maxX-1, maxY-4); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, "\x1b[0;31mHello world")
+		fmt.Fprintln(v, "\x1b[0;31mTasks")
 	}
 
 	if v, err := g.SetView("calendar", 0, 0, maxX/2, maxY-4); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
+
 		fmt.Fprintln(v, "\x1b[0;31mCalendar")
 	}
 
@@ -46,8 +47,7 @@ func layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprint(v, "> ")
-		v.MoveCursor(2, 0, true)
+
 		v.Editable = true
 		v.Editor = gocui.DefaultEditor
 		if _, err := g.SetCurrentView("input"); err != nil {
