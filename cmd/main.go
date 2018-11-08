@@ -46,7 +46,13 @@ func layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, "> x =", maxX, "y = ", maxY)
+		fmt.Fprint(v, "> ")
+		v.MoveCursor(2, 0, true)
+		v.Editable = true
+		v.Editor = gocui.DefaultEditor
+		if _, err := g.SetCurrentView("input"); err != nil {
+			return err
+		}
 	}
 
 	return nil
